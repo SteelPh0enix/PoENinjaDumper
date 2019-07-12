@@ -5,8 +5,8 @@ from datetime import date
 import sys
 import os
 
-DEFAULT_OUTPUT_FILENAME = "PoENinjaData.ods"
-POE_LEAGUE = "Betrayal"
+DEFAULT_OUTPUT_FILENAME = "../PoENinjaData.ods"
+POE_LEAGUE = "Legion"
 TODAY_DATE = str(date.today())
 POENINJA_URL_LIST = {
     "Currency": {
@@ -16,6 +16,10 @@ POENINJA_URL_LIST = {
     "Fragments": {
         "url": "https://poe.ninja/api/data/currencyoverview",
         "type": "Fragment"
+    },
+    "Incubators": {
+        "url": "https://poe.ninja/api/data/itemoverview",
+        "type": "Incubator"
     },
     "Scarabs": {
         "url": "https://poe.ninja/api/data/itemoverview",
