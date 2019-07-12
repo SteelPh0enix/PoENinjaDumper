@@ -11,8 +11,8 @@ Features:
 
 You will need
 * Python 3 (i used 3.7.1 for development, but i'm pretty sure any non-ancient version will be sufficent) with pip installed, and in `PATH`
-* [Requests library](http://docs.python-requests.org/en/master/): `pip install requests`
-* [pyexcel-ods](https://github.com/pyexcel/pyexcel-ods): `pip install pyexcel-ods`
+* [Requests library](http://docs.python-requests.org/en/master/): `pip install requests` (or `python -m pip install requests`, if pip is not in `PATH`)
+* [pyexcel-ods3](https://github.com/pyexcel/pyexcel-ods3): `pip install pyexcel-ods3` (or `python -m pip install pyexcel-ods3`, if pip is not in `PATH`)
 
 ## Usage
 

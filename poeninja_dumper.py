@@ -1,6 +1,6 @@
 import requests
 import json
-import pyexcel_ods
+import pyexcel_ods3
 from datetime import date
 import sys
 import os
@@ -120,7 +120,7 @@ def load_item_page(page_data):
 def make_spreadsheet(file_name):
     sheet = {}
     if os.path.exists(file_name):
-        sheet = pyexcel_ods.get_data(file_name)
+        sheet = pyexcel_ods3.get_data(file_name)
         for item_type in POENINJA_URL_LIST:
             sheet[item_type] = [["Item name", "Value in chaos orbs"]]
     else:
@@ -131,7 +131,7 @@ def make_spreadsheet(file_name):
 
 
 def save_to_spreadsheet(file_name, data):
-    pyexcel_ods.save_data(file_name, data)
+    pyexcel_ods3.save_data(file_name, data)
 
 
 def run():
