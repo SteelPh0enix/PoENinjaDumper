@@ -1,5 +1,4 @@
 import requests
-import ujson
 import datetime
 
 POE_LEAGUE = 'Harvest'
@@ -44,11 +43,10 @@ POENINJA_URL_LIST = {
         'url': 'https://poe.ninja/api/data/itemoverview',
         'type': 'SkillGem'
     },
-    # Takes EXTREMELY long to download!
-    # 'BaseTypes': {
-    # 'url': 'https://poe.ninja/api/data/itemoverview',
-    # 'type': 'BaseType'
-    # },
+    'BaseTypes': {
+    'url': 'https://poe.ninja/api/data/itemoverview',
+    'type': 'BaseType'
+    },
     'HelmetEnchants': {
         'url': 'https://poe.ninja/api/data/itemoverview',
         'type': 'HelmetEnchant'
@@ -134,7 +132,7 @@ def load_category(category_name):
     after_request = datetime.datetime.now()
     print('Request time: {0}ms'.format(get_td(start_time, after_request)))
 
-    json_data = ujson.loads(data_request.text)
+    json_data = data_request.json()
 
     after_json = datetime.datetime.now()
     print('JSON parsing time: {0}ms'.format(get_td(after_request, after_json)))
