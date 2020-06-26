@@ -1,10 +1,6 @@
 import requests
 import json
-import pyexcel_ods3
-import sys
-import os
 
-DEFAULT_OUTPUT_FILENAME = './PoENinjaData.ods'
 POE_LEAGUE = 'Harvest'
 POENINJA_URL_LIST = {
     'Currency': {
@@ -49,8 +45,8 @@ POENINJA_URL_LIST = {
     },
     # Takes EXTREMELY long to download!
     # 'BaseTypes': {
-        # 'url': 'https://poe.ninja/api/data/itemoverview',
-        # 'type': 'BaseType'
+    # 'url': 'https://poe.ninja/api/data/itemoverview',
+    # 'type': 'BaseType'
     # },
     'HelmetEnchants': {
         'url': 'https://poe.ninja/api/data/itemoverview',
@@ -91,72 +87,54 @@ POENINJA_URL_LIST = {
 }
 
 
-def get_item_info(item_json, api_url):
-    # Currency has other key names, don't ask why, i dunno
-    if api_url == 'https://poe.ninja/api/data/currencyoverview':
-        return item_json['currencyTypeName'], item_json['chaosEquivalent']
+def get_category_name(category_json, is_currency):
+    # Currency has different key names than other categorys, don't ask why, i dunno
+    if is_currency:
+        return category_json['currencyTypeName']
     else:
-        return item_json['name'], item_json['chaosValue']
+        return category_json['name']
 
 
-def parse_item_page(json_data, item_data_info):
+def get_category_chaos_value(category_json, is_currency):
+    # Currency has different key names than other categorys, don't ask why, i dunno
+    if is_currency:
+        return category_json['chaosEquivalent']
+    else:
+        return category_json['chaosValue']
+
+
+def parse_category(json_data, category_info):
     page_data = list()
-    for item in json_data['lines']:
-        item_name, item_value = get_item_info(item, item_data_info['url'])
-        page_data.append([item_name, item_value])
+    for category in json_data['lines']:
+        is_currency = category_info['url'] == POENINJA_URL_LIST['Currency']['url']
+        category_name = get_category_name(category, is_currency)
+        category_value = get_category_chaos_value(category, is_currency)
+        page_data.append([category_name, category_value])
 
     return page_data
 
 
-def load_item_page(page_data):
+def load_category(category_name):
     request_arguments = {'league': POE_LEAGUE,
-                         'type': page_data['type']}
-    data_request = requests.get(page_data['url'], params=request_arguments)
+                         'type': POENINJA_URL_LIST[category_name]['type'],
+                         'language': 'en'}
+    data_request = requests.get(
+        POENINJA_URL_LIST[category_name]['url'], params=request_arguments)
 
     return json.loads(data_request.text)
 
 
-def make_spreadsheet(file_name):
-    sheet = {}
-    if os.path.exists(file_name):
-        sheet = pyexcel_ods3.get_data(file_name)
-        for item_type in POENINJA_URL_LIST:
-            sheet[item_type] = [['Item name', 'Value in chaos orbs']]
-    else:
-        for item_type in POENINJA_URL_LIST:
-            sheet.update({item_type: [['Item name', 'Value in chaos orbs']]})
+def load_all_categories():
+    category_dict = {}
 
-    return sheet
+    for category_name in POENINJA_URL_LIST:
+        print('Downloading and parsing {0}'.format(category_name))
+        category_dict[category_name] = load_category(category_name)
 
+    return category_dict
 
-def save_to_spreadsheet(file_name, data):
-    pyexcel_ods3.save_data(file_name, data)
+def get_category_list():
+  return [name for name in POENINJA_URL_LIST]
 
-
-def run():
-    print('League: {0}'.format(POE_LEAGUE))
-
-    ods_file_name = DEFAULT_OUTPUT_FILENAME
-    if (len(sys.argv) >= 2):
-        ods_file_name = sys.argv[1]
-
-    print('Saving to/updating "{0}"\n'.format(ods_file_name))
-
-    spreadsheet = make_spreadsheet(ods_file_name)
-
-    for data_type, data in POENINJA_URL_LIST.items():
-        print('Getting {0} prices...'.format(data_type))
-
-        print('\tDownloading data...')
-        item_data_json = load_item_page(data)
-        print('\tParsing data...')
-        parsed_data = parse_item_page(item_data_json, data)
-        print('\tAdding data to spreadsheet...')
-        spreadsheet[data_type].extend(parsed_data)
-
-    print('Saving the spreadsheet...')
-    save_to_spreadsheet(ods_file_name, spreadsheet)
-
-
-if __name__ == '__main__':
-    run()
+def get_league():
+  return POE_LEAGUE
