@@ -123,25 +123,25 @@ def load_category(category_name):
                          'type': POENINJA_URL_LIST[category_name]['type'],
                          'language': 'en'}
 
-    print('\n=== load_category {0} request ==='.format(category_name))
-    start_time = datetime.datetime.now()
+    # print('\n=== load_category {0} request ==='.format(category_name))
+    # start_time = datetime.datetime.now()
 
     data_request = requests.get(
         POENINJA_URL_LIST[category_name]['url'], params=request_arguments)
 
-    after_request = datetime.datetime.now()
-    print('Request time: {0}ms'.format(get_td(start_time, after_request)))
+    # after_request = datetime.datetime.now()
+    # print('Request time: {0}ms'.format(get_td(start_time, after_request)))
 
     json_data = data_request.json()
 
-    after_json = datetime.datetime.now()
-    print('JSON parsing time: {0}ms'.format(get_td(after_request, after_json)))
+    # after_json = datetime.datetime.now()
+    # print('JSON parsing time: {0}ms'.format(get_td(after_request, after_json)))
 
     parsed = parse_category(json_data)
 
-    after_parse = datetime.datetime.now()
-    print('Parsing time: {0}ms'.format(get_td(after_json, after_parse)))
-    print('Summary: {0}ms wasted\n'.format(get_td(start_time, after_parse)))
+    # after_parse = datetime.datetime.now()
+    # print('Parsing time: {0}ms'.format(get_td(after_json, after_parse)))
+    # print('Summary: {0}ms wasted\n'.format(get_td(start_time, after_parse)))
 
     return parsed
 
