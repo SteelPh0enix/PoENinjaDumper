@@ -1,5 +1,6 @@
 import requests
-import json
+import ujson
+import datetime
 
 POE_LEAGUE = 'Harvest'
 POENINJA_URL_LIST = {
@@ -114,18 +115,43 @@ def parse_category(json_data):
     return category_data
 
 
+def get_td(a, b):
+    delta = b - a
+    return delta.total_seconds() * 1000
+
+
 def load_category(category_name):
     request_arguments = {'league': POE_LEAGUE,
                          'type': POENINJA_URL_LIST[category_name]['type'],
                          'language': 'en'}
+
+    print('\n=== load_category {0} request ==='.format(category_name))
+    start_time = datetime.datetime.now()
+
     data_request = requests.get(
         POENINJA_URL_LIST[category_name]['url'], params=request_arguments)
 
-    return parse_category(json.loads(data_request.text))
+    after_request = datetime.datetime.now()
+    print('Request time: {0}ms'.format(get_td(start_time, after_request)))
+
+    json_data = ujson.loads(data_request.text)
+
+    after_json = datetime.datetime.now()
+    print('JSON parsing time: {0}ms'.format(get_td(after_request, after_json)))
+
+    parsed = parse_category(json_data)
+
+    after_parse = datetime.datetime.now()
+    print('Parsing time: {0}ms'.format(get_td(after_json, after_parse)))
+    print('Summary: {0}ms wasted\n'.format(get_td(start_time, after_parse)))
+
+    return parsed
 
 # Return data structure:
 # Dict with categories (see parse_category function) kept as values, category names are keys
 # Example: data['Currency']['Exalted Orb] will access exalted orb data
+
+
 def load_all_categories():
     category_data = {}
 
