@@ -87,31 +87,29 @@ POENINJA_URL_LIST = {
 }
 
 
-def get_category_name(category_json, is_currency):
-    # Currency has different key names than other categorys, don't ask why, i dunno
-    if is_currency:
-        return category_json['currencyTypeName']
-    else:
-        return category_json['name']
+def get_item_name(item_json):
+    try:
+        return item_json['name']
+    except KeyError:
+        return item_json['currencyTypeName']
 
 
-def get_category_chaos_value(category_json, is_currency):
-    # Currency has different key names than other categorys, don't ask why, i dunno
-    if is_currency:
-        return category_json['chaosEquivalent']
-    else:
-        return category_json['chaosValue']
+def get_item_chaos_value(item_json):
+    try:
+        return item_json['chaosValue']
+    except KeyError:
+        return item_json['chaosEquivalent']
 
 
-def parse_category(json_data, category_info):
-    page_data = list()
-    for category in json_data['lines']:
-        is_currency = category_info['url'] == POENINJA_URL_LIST['Currency']['url']
-        category_name = get_category_name(category, is_currency)
-        category_value = get_category_chaos_value(category, is_currency)
-        page_data.append([category_name, category_value])
+def parse_category(json_data):
+    category_data = {}
+    for item in json_data['lines']:
+        itemname = get_item_name(item)
+        category_data[itemname] = {}
+        # Add stuff you want to have parsed HERE!
+        category_data[itemname]['value'] = get_item_chaos_value(item)
 
-    return page_data
+    return category_data
 
 
 def load_category(category_name):
@@ -121,20 +119,22 @@ def load_category(category_name):
     data_request = requests.get(
         POENINJA_URL_LIST[category_name]['url'], params=request_arguments)
 
-    return json.loads(data_request.text)
+    return parse_category(json.loads(data_request.text))
 
 
 def load_all_categories():
-    category_dict = {}
+    category_data = {}
 
-    for category_name in POENINJA_URL_LIST:
+    for category_name in get_category_list():
         print('Downloading and parsing {0}'.format(category_name))
-        category_dict[category_name] = load_category(category_name)
+        category_data[category_name] = load_category(category_name)
 
-    return category_dict
+    return category_data
+
 
 def get_category_list():
-  return [name for name in POENINJA_URL_LIST]
+    return [name for name in POENINJA_URL_LIST]
+
 
 def get_league():
-  return POE_LEAGUE
+    return POE_LEAGUE

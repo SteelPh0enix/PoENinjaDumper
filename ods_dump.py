@@ -1,7 +1,7 @@
 import pyexcel_ods3
 import sys
 import os
-from poeninja_dumper import load_all_categories, get_category_list, get_league
+from poeninja_dumper import load_all_categories, get_category_list, get_league, load_category
 
 DEFAULT_OUTPUT_FILENAME = './PoENinjaData.ods'
 
@@ -33,7 +33,8 @@ def run():
     spreadsheet = make_spreadsheet(ods_file_name)
 
     for category_name, category_data in load_all_categories().items():
-        spreadsheet[category_name].extend(category_data)
+        category_data_list = [[name] + [value for key, value in data.items()] for name, data in category_data.items()]
+        spreadsheet[category_name].extend(category_data_list)
 
     print('Saving the spreadsheet...')
     save_to_spreadsheet(ods_file_name, spreadsheet)
