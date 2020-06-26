@@ -101,6 +101,8 @@ def get_item_chaos_value(item_json):
         return item_json['chaosEquivalent']
 
 
+# Return data structure:
+# dict[item name][key], for example to get Exalted Orb price, use data['Exalted Orb']['value']
 def parse_category(json_data):
     category_data = {}
     for item in json_data['lines']:
@@ -121,7 +123,9 @@ def load_category(category_name):
 
     return parse_category(json.loads(data_request.text))
 
-
+# Return data structure:
+# Dict with categories (see parse_category function) kept as values, category names are keys
+# Example: data['Currency']['Exalted Orb] will access exalted orb data
 def load_all_categories():
     category_data = {}
 

@@ -30,6 +30,7 @@ There's a WIP script `filter_dump.py` that will dump the poe.ninja items from al
 
 `poeninja_dumper.py` is now separate script that can be used in your own tools!
 
+
 ## Remarks and known bugs
 
 When updating, script removes rows with no data, leaving only 1 row blank between, so it may break user-created tables/spreadsheets.
